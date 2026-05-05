@@ -1,10 +1,15 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 from dotenv import find_dotenv
 from pydantic import computed_field
 from pydantic_settings import BaseSettings
 import torch
 import os
+
+
+def _marker_env_files() -> Tuple[str, ...] | str:
+    paths = tuple(dict.fromkeys(p for p in (find_dotenv("local.env"), find_dotenv(".env")) if p))
+    return paths if paths else find_dotenv("local.env")
 
 
 class Settings(BaseSettings):
@@ -24,6 +29,7 @@ class Settings(BaseSettings):
 
     # LLM
     GOOGLE_API_KEY: Optional[str] = ""
+    openai_proxy: Optional[str] = None
 
     # General models
     TORCH_DEVICE: Optional[str] = (
@@ -53,7 +59,7 @@ class Settings(BaseSettings):
             return torch.float32
 
     class Config:
-        env_file = find_dotenv("local.env")
+        env_file = _marker_env_files()
         extra = "ignore"
 
 

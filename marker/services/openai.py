@@ -1,7 +1,8 @@
 import json
 import time
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
+import httpx
 import openai
 import PIL
 from marker.logger import get_logger
@@ -28,7 +29,11 @@ class OpenAIService(BaseService):
     openai_image_format: Annotated[
         str,
         "The image format to use for the OpenAI-like service. Use 'png' for better compatability",
-    ] = "webp"
+    ] = "png"
+    # Not wrapped in Annotated intentionally: verify_config_keys() treats every
+    # Annotated field as required and asserts non-None, so an optional field
+    # with None default must stay plain-typed to avoid a spurious startup error.
+    openai_proxy: Optional[str] = None  # HTTP(S) proxy, e.g. "http://proxy:8080"
 
     def process_images(self, images: List[Image.Image]) -> List[dict]:
         """
@@ -127,4 +132,20 @@ class OpenAIService(BaseService):
         return {}
 
     def get_client(self) -> openai.OpenAI:
-        return openai.OpenAI(api_key=self.openai_api_key, base_url=self.openai_base_url)
+        kwargs = {
+            "api_key": self.openai_api_key,
+            "base_url": self.openai_base_url,
+        }
+        if self.openai_proxy:
+            # httpx 0.27 deprecated Client(proxy=...) in favour of explicit
+            # mounts with HTTPTransport.  Using mounts is stable across all
+            # httpx versions that support it (0.24+) and avoids the silent
+            # no-op that occurs when the deprecated API is ignored.
+            transport = httpx.HTTPTransport(proxy=self.openai_proxy)
+            kwargs["http_client"] = httpx.Client(
+                mounts={
+                    "http://": transport,
+                    "https://": transport,
+                },
+            )
+        return openai.OpenAI(**kwargs)

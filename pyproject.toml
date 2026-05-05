@@ -1,3 +1,44 @@
+# PEP 621 metadata for uv/pip path installs (dependencies mirror [tool.poetry.dependencies]).
+[project]
+name = "marker-pdf"
+version = "1.10.2"
+description = "Convert documents to markdown with high speed and accuracy."
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+requires-python = ">=3.10"
+dependencies = [
+    "Pillow>=10.1.0",
+    "pydantic>=2.4.2",
+    "pydantic-settings>=2.0.3",
+    "transformers>=4.45.2,<5",
+    "python-dotenv>=1.0.0",
+    "torch>=2.7.0",
+    "tqdm>=4.66.1",
+    "ftfy>=6.1.1",
+    "rapidfuzz>=3.8.1",
+    "surya-ocr>=0.17.1",
+    "regex>=2024.4.28",
+    "pdftext>=0.6.3,<0.7",
+    "markdownify>=1.1.0",
+    "click>=8.2.0",
+    "markdown2>=2.5.2",
+    "filetype>=1.2.0",
+    "google-genai>=1.0.0",
+    "anthropic>=0.46.0",
+    "pre-commit>=4.2.0",
+    "scikit-learn>=1.6.1",
+    "openai>=1.65.2",
+]
+
+[project.optional-dependencies]
+full = [
+    "mammoth>=1.9.0",
+    "openpyxl>=3.1.5",
+    "python-pptx>=1.0.2",
+    "ebooklib>=0.18",
+    "weasyprint>=63.1",
+]
+
 [tool.poetry]
 name = "marker-pdf"
 version = "1.10.2"

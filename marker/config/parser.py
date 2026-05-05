@@ -112,6 +112,9 @@ class ConfigParser:
         if settings.GOOGLE_API_KEY:
             config["gemini_api_key"] = settings.GOOGLE_API_KEY
 
+        if settings.openai_proxy:
+            config["openai_proxy"] = settings.openai_proxy
+
         return config
 
     def get_llm_service(self):

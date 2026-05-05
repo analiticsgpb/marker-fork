@@ -82,13 +82,14 @@ class OpenAIService(BaseService):
         image_data = self.format_image_for_llm(image)
 
         messages = [
+            {"role": "system", "content": "Respond in Russian."},
             {
                 "role": "user",
                 "content": [
                     *image_data,
                     {"type": "text", "text": prompt},
                 ],
-            }
+            },
         ]
 
         total_tries = max_retries + 1
